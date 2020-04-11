@@ -23,29 +23,37 @@ let respuesta = {
 
 app.post('/send', function (req, res) {
   if(!req.body.address || !req.body.template) {
-  console.log(req.body.address, req.body.template)
    respuesta = {
     error: true,
     codigo: 502,
     mensaje: 'El email y el template son requeridos'
    };
+   res.status(502).send(respuesta);
   }else {
     email = {
      address: req.body.address,
      template: req.body.template
     };
-    respuesta = {
-     error: false,
-     codigo: 200,
-     mensaje: 'El correo se envio exitosamente.',
-     respuesta: email
-    };
-    sendEmail(email.address, email.template);
+    sendEmail(email.address, email.template).then(function () { 
+      respuesta = {
+        error: false,
+        codigo: 200,
+        mensaje: 'El correo se envio exitosamente.',
+        respuesta: email
+      };
+      res.status(200).send(respuesta);
+    }). 
+    catch(function () { 
+      respuesta = {
+        error: true,
+        codigo: 500,
+        mensaje: 'El correo no se pudo enviar.',
+      };
+      res.status(500).send(respuesta);
+    }); 
   }
-  
-  res.send(respuesta);
  });
 
 app.listen(process.env.PORT, () => {
- console.log("El servidor está inicializado en el puerto 3000");
+ console.log("El servidor está inicializado en el puerto 8080");
 });
