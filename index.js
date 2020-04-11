@@ -23,6 +23,7 @@ let respuesta = {
 
 app.post('/send', function (req, res) {
   if(!req.body.address || !req.body.template) {
+  console.log(req.body.address, req.body.template)
    respuesta = {
     error: true,
     codigo: 502,
